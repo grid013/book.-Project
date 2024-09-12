@@ -1,0 +1,396 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Product Description</title>
+    <link rel="stylesheet" href={{url_for( 'static', filename='css/bookDescription.css' )}} />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900');
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .search-text {
+            margin-top: 50px;
+            background-color: #272d33;
+            padding-top: 60px;
+            padding-bottom: 60px;
+        }
+        
+        .search-text .input-search {
+            height: 45px;
+            width: 40%;
+            padding-left: 20px;
+            color: #333;
+        }
+        
+        .search-text .btn-search {
+            background: #da3e44;
+            border: none;
+            color: #FFF;
+            height: 45px;
+            width: 80px;
+        }
+        
+        .search-text h4 {
+            color: #FFF;
+            font-weight: 700;
+        }
+        
+        footer {
+            background-color: #33383c;
+            padding: 30px 0px;
+        }
+        
+        .logo {
+            color: #FFF;
+            font-weight: 700;
+            font-size: 30px;
+        }
+        
+        .address span,
+        .menu span {
+            color: #FFF;
+            font-weight: bold;
+            border-bottom: 1px solid #c7c7c7;
+            padding: 10px 0px;
+            display: block;
+            text-transform: uppercase;
+            font-size: 16px;
+            letter-spacing: 3px;
+        }
+        
+        .address li a,
+        .menu li a {
+            color: #FFF;
+            letter-spacing: 3px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .address li,
+        .menu li {
+            margin: 20px 0px;
+            list-style: none;
+        }
+        
+        .address li a:hover,
+        .menu li a:hover {
+            color: #da3e44;
+            transition: all 1s ease-in-out;
+            -webkit-transition: all 1s ease-in-out;
+            -moz-transition: all 1s ease-in-out;
+            -o-transition: all 1s ease-in-out;
+        }
+        
+        .address .fa {
+            color: #da3e44;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<!-- Modal -->
+<div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="LoginLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="LoginLabel">Login</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                Please login for commenting !
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a href="/login" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top ">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" rel="home" href="/" title="Buy Everything">BOOKSHOP</a>
+            </div>
+
+            <div id="navbar" class="collapse navbar-collapse navbar-responsive-collapse  ">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Home</a></li>
+
+                    {% if not loggedIn %}
+                    <li><a class="link" href="/login">Sign In</a></li>
+                    {% else %} {% if userData.usertype == "author" %}
+                    <li><a class="link" href="/account/dashboard">Dashboard</a></li>{% endif %}
+                    <li><a class="link" href="/logout">Logout</a></li>
+
+                    {% endif %}
+
+                </ul>
+
+            </div>
+
+        </div>
+    </div>
+    </br>
+    </br>
+    </br>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <img src={{ url_for( 'static', filename='uploads/' + data.image) }} id="productImage" style="width:200px" />
+            </div>
+            <div class="col-md-9" style="top:40px">
+                <span class="heading">Details</span>
+                <table id="descriptionTable" class="table" style="border: 0px;">
+                    <tr>
+                        <td>Name</td>
+                        <td><small>{{data.bookname}}</small></td>
+                    </tr>
+                    <tr>
+                        <td>Author Name</td>
+                        <td><small>{{data.authorname}}</small></td>
+                    </tr>
+                    <tr>
+                        <td>Price</td>
+                        <td><small>&#163;{{"%.2f"|format(data.price)}}</small></td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td><small>{{data.description}}</small></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <hr>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-center row">
+            <div class="col-md-3">
+                <span class="heading">User Rating</span>
+                
+                {% for i in range(1,6) %}
+                    {% if ratingsData.avg_ratings and ratingsData.avg_ratings >= i %}
+                    <span class="fa fa-star checked"></span>
+                    {% else %}
+                    <span class="fa fa-star"></span>
+                    {% endif %}
+                {% endfor %}
+                <!-- <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star"></span> -->
+                <p>{{ratingsData.avg_ratings if ratingsData.avg_ratings != None else 0 }} average based on {{ratingsData.tot_ratings}} reviews.</p>
+                <hr style="border:3px solid #f1f1f1">
+
+                <div class="row">
+                <div class="side">
+                    <div>5 star</div>
+                </div>
+                <div class="middle">
+                    <div class="bar-container">
+                        {% if ratingsData.tot_ratings != 0 %}
+                        <div class="bar-2" style="width:{{ ((100 * ratingsData.five_rating) / ratingsData.tot_ratings) }}%"></div>
+                        {% else %}
+                        <div class="bar-2" style="width:0%"></div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="side right">
+                    <div>{{ratingsData.five_rating}}</div>
+                </div>
+                <div class="side">
+                    <div>4 star</div>
+                </div>
+                <div class="middle">
+                    <div class="bar-container">
+                        {% if ratingsData.tot_ratings != 0 %}
+                        <div class="bar-2" style="width:{{ ((100 * ratingsData.four_rating) / ratingsData.tot_ratings) }}%"></div>
+                        {% else %}
+                        <div class="bar-2" style="width:0%"></div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="side right">
+                    <div>{{ratingsData.four_rating}}</div>
+                </div>
+                <div class="side">
+                    <div>3 star</div>
+                </div>
+                <div class="middle">
+                    <div class="bar-container">
+                        {% if ratingsData.tot_ratings != 0 %}
+                        <div class="bar-2" style="width:{{ ((100 * ratingsData.three_rating) / ratingsData.tot_ratings) }}%"></div>
+                        {% else %}
+                        <div class="bar-2" style="width:0%"></div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="side right">
+                    <div>{{ratingsData.three_rating}}</div>
+                </div>
+                <div class="side">
+                    <div>2 star</div>
+                </div>
+                <div class="middle">
+                    <div class="bar-container">
+                        {% if ratingsData.tot_ratings != 0 %}
+                        <div class="bar-2" style="width:{{ ((100 * ratingsData.two_rating) / ratingsData.tot_ratings) }}%"></div>
+                        {% else %}
+                        <div class="bar-2" style="width:0%"></div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="side right">
+                    <div>{{ratingsData.two_rating}}</div>
+                </div>
+                <div class="side">
+                    <div>1 star</div>
+                </div>
+                <div class="middle">
+                    <div class="bar-container">
+                        {% if ratingsData.tot_ratings != 0 %}
+                        <div class="bar-2" style="width:{{ ((100 * ratingsData.one_rating) / ratingsData.tot_ratings) }}%"></div>
+                        {% else %}
+                        <div class="bar-2" style="width:0%"></div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="side right">
+                    <div>{{ratingsData.one_rating}}</div>
+                </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <span class="heading">Comments</span>
+                <hr>
+                <div class="d-flex flex-column comment-section" style="max-height: 150px;overflow-x: auto;">
+                    {% for comment in commentsData %}
+                    <div class="bg-white p-2">
+                        <div class="d-flex flex-row user-info">
+                            <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name"><strong>{{comment.name}}</strong></span><span class="date text-black-50"> {{comment.date_diff}}</span></div>
+                        </div>
+                        <div class="mt-2">
+                            <p class="comment-text">{{comment.message}}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="bg-light text-right">
+                    <div class="d-flex flex-row align-items-start">
+                        <span id="error-msg" class="text-danger"></span>
+                        <textarea class="form-control ml-1 shadow-none textarea" id="comment"></textarea>
+                        <br>
+                        <div class="rating">
+                            <span><input type="radio" name="rating" id="str5" value="5"><label class="fa fa-star" for="str5"></label></span>
+                            <span><input type="radio" name="rating" id="str4" value="4"><label class="fa fa-star" for="str4"></label></span>
+                            <span><input type="radio" name="rating" id="str3" value="3"><label class="fa fa-star" for="str3"></label></span>
+                            <span><input type="radio" name="rating" id="str2" value="2"><label class="fa fa-star" for="str2"></label></span>
+                            <span><input type="radio" name="rating" id="str1" value="1"><label class="fa fa-star" for="str1"></label></span>
+                        </div>
+                        <br>
+                    </div>
+                    <div class="mt-2 text-right" style="margin-top:25px">
+                        <button class="btn btn-primary btn-sm shadow-none" type="button" id="postComment">Post comment</button><button class="btn btn-outline-primary btn-sm ml-1 shadow-none" type="button">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><br><br><br>
+    <footer>
+        <div class="container ">
+            <div class="row ">
+                <div class="col-md-4 col-sm-6 col-xs-12 ">
+                    <span class="logo ">BOOKSHOP</span>
+                </div>
+                <div class="col-md-4 col-sm-6 col-xs-12 ">
+                    <ul class="address ">
+                        <span>Contact</span>
+                        <li>
+                            <i class="fa fa-phone " aria-hidden="true "></i>
+                            <a href="# ">Phone</a>
+                        </li>
+                        <li>
+                            <i class="fa fa-map-marker " aria-hidden="true "></i>
+                            <a href="# ">Adress</a>
+                        </li>
+                        <li>
+                            <i class="fa fa-envelope " aria-hidden="true "></i>
+                            <a href="# ">Email</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+<script>
+    $(document).ready(function() {
+        let userRating = 0
+        $(".rating input:radio").attr("checked", false);
+
+        $('.rating input').click(function() {
+            $(".rating span").removeClass('checked');
+            $(this).parent().addClass('checked');
+        });
+
+        $('input:radio').change(function() {
+            userRating = this.value;
+        });
+
+        $(document).on("click", "#postComment", function(event) {
+            let bookId = "{{data.bookid}}"
+            let userId = "{{userData.userid}}"
+            let comment = $("#comment").val()
+            let ratings = userRating
+
+            if (userId == "") {
+                $("#LoginModal").modal({
+                    show: true
+                })
+                return false
+            } else if (comment == "") {
+                $("#error-msg").text("Please write Comment")
+                return false
+            } else if (ratings == 0) {
+                $("#error-msg").text("Please give Ratings")
+                return false
+            }
+
+
+            $.ajax({
+                type: "POST",
+                url: "/account/postComment",
+                dataType: "json",
+                data: {
+                    "bookId": bookId,
+                    "userId": userId,
+                    "comment": comment,
+                    "ratings": ratings
+                },
+                success: function(result, status, xhr) {
+                    if (result.status) {
+                        location.reload()
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
+                }
+            });
+        });
+    });
+</script>
+
+</html>

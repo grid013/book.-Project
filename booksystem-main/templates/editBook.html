@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Book Shop|Home</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+
+
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" rel="home" href="/" title="Buy Everything">BOOKSHOP</a>
+            </div>
+
+            <div id="navbar" class="collapse navbar-collapse navbar-responsive-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Home</a></li>
+
+                    {% if not loggedIn %}
+                    <li><a class="link" href="/login">Sign In</a></li>
+                    {% else %} {% if userData.usertype == "author" %}
+                    <li class="active"><a class="link" href="/account/dashboard">Dashboard</a></li>{% endif %}
+                    <li><a class="link" href="/logout">Logout</a></li>
+
+                    {% endif %}
+
+                </ul>
+                <!-- <form class="navbar-form navbar-right" role="search" method="post" id="searchform" action="/search">
+                    <div class="form-group">
+                        <input name="searchBox" id="searchBox" type="text" class="search-query form-control" autocomplete="off" placeholder="Search...">
+                        <button id="searchButton" class="btn btn-info" type="submit" value="Search">
+					  <span class="glyphicon glyphicon-search"></span>
+					</button>
+                    </div>
+                </form> -->
+
+            </div>
+
+        </div>
+    </div>
+    </br>
+    </br>
+    </br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <form id="bookedit-form" action="/account/bookedit/{{data.bookid}}" method="post" enctype="multipart/form-data" role="form" style="display: block;">
+                    <div class="form-group"><label>Book Image:</label>
+                        <input type="file" name="image" accept="image/*" value="{{data.image}}" tabindex="1" class="form-control">
+                        <input type="hidden" name="image" value="{{data.image}}">
+                        <img src="{{ url_for( 'static', filename='uploads/' + data.image) }}" id="uploads" alt="uploads" class="image-responsive" id="itemImage" width="150" height="200" />
+                    </div>
+
+                    <div class="form-group"><label>Book Name:</label> <input type="text" name="bookname" value="{{data.bookname}}" tabindex="1" class="form-control" required></div>
+                    <div class="form-group"><label>Author Name:</label> <input type="text" name="authorname" value="{{data.authorname}}" tabindex="1" class="form-control" required></div>
+                    <div class="form-group"><label>Price:</label> <input type="text" name="price" tabindex="1" value="{{data.price}}" class="form-control" required></div>
+                    <div class="form-group"><label>Description:</label> <input type="text" name="description" value="{{data.description}}" tabindex="1" class="form-control" required> </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                <input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-primary btn-login" value="Submit">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </br>
+    </br>
+    </br>
+    </br>
+    <nav class="navbar-wrapper navbar-inverse navbar-fixed-bottom">
+    </nav>
+</body>
+<script>
+    $(document).ready(function() {
+        $('input[type=file]').change(function(event) {
+            $("#uploads").fadeIn("fast").attr('src', URL.createObjectURL(event.target.files[0]));
+        });
+    });
+</script>
+
+</html>
